@@ -1,0 +1,1072 @@
+================================================================================
+FILE 1: index.html
+================================================================================
+
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Productivity Dashboard</title>
+    <meta
+      name="description"
+      content="A glassmorphism student dashboard with a to-do list, Pomodoro timer, study progress tracker and motivational quotes."
+    />
+    <!-- Google Fonts (the only external resource used) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <!-- Decorative animated background blobs -->
+    <div class="bg-blobs" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+    </div>
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header glass">
+      <a class="brand" href="#top">
+        <span class="brand-mark">SP</span>
+        <span class="brand-text">Study<strong>Deck</strong></span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#tasks">Tasks</a>
+        <a href="#pomodoro">Pomodoro</a>
+        <a href="#progress">Progress</a>
+      </nav>
+
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme">
+        <span class="theme-icon" data-icon="moon">☾</span>
+        <span class="theme-icon" data-icon="sun">☀</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <!-- ============ HERO / LANDING ============ -->
+      <section class="hero" aria-labelledby="heroTitle">
+        <p class="eyebrow reveal">Focus • Track • Achieve</p>
+        <h1 id="heroTitle" class="reveal delay-1">
+          Your study day,<br /><span class="gradient-text">beautifully organised.</span>
+        </h1>
+        <p class="hero-sub reveal delay-2">
+          A single dashboard for your tasks, focus sessions and study hours — everything saved right
+          in your browser.
+        </p>
+        <div class="hero-actions reveal delay-3">
+          <a class="btn btn-primary" href="#tasks">Start planning</a>
+          <a class="btn btn-ghost" href="#pomodoro">Focus for 25 min</a>
+        </div>
+
+        <!-- Live summary stats -->
+        <div class="hero-stats reveal delay-4">
+          <div class="stat glass">
+            <span class="stat-value" id="statOpen">0</span>
+            <span class="stat-label">Open tasks</span>
+          </div>
+          <div class="stat glass">
+            <span class="stat-value" id="statDone">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat glass">
+            <span class="stat-value" id="statHours">0h</span>
+            <span class="stat-label">Studied today</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DASHBOARD GRID ============ -->
+      <div class="dashboard">
+        <!-- ---- To-Do List ---- -->
+        <section class="card glass" id="tasks" aria-labelledby="tasksTitle">
+          <header class="card-head">
+            <h2 id="tasksTitle">To-Do List</h2>
+            <span class="pill" id="taskCounter">0 / 0</span>
+          </header>
+
+          <form id="taskForm" class="task-form" autocomplete="off">
+            <label class="sr-only" for="taskInput">New task</label>
+            <input
+              id="taskInput"
+              type="text"
+              placeholder="e.g. Revise chapter 4 — Thermodynamics"
+              maxlength="90"
+              required
+            />
+            <button class="btn btn-primary" type="submit">Add</button>
+          </form>
+
+          <ul id="taskList" class="task-list"></ul>
+          <p class="empty" id="taskEmpty">Nothing here yet. Add your first task above.</p>
+        </section>
+
+        <!-- ---- Pomodoro Timer ---- -->
+        <section class="card glass" id="pomodoro" aria-labelledby="pomodoroTitle">
+          <header class="card-head">
+            <h2 id="pomodoroTitle">Pomodoro Timer</h2>
+            <span class="pill" id="modeLabel">Focus</span>
+          </header>
+
+          <div class="timer-wrap">
+            <!-- SVG ring shows the remaining time visually -->
+            <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="52" />
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="timer-readout">
+              <span id="timerDisplay" role="timer" aria-live="polite">25:00</span>
+              <small id="cycleLabel">Round 1</small>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button class="btn btn-primary" id="startBtn" type="button">Start</button>
+            <button class="btn btn-ghost" id="pauseBtn" type="button">Pause</button>
+            <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+          </div>
+          <p class="hint">25 minutes of focus, then a 5 minute break. Repeat.</p>
+        </section>
+
+        <!-- ---- Study Progress Tracker ---- -->
+        <section class="card glass" id="progress" aria-labelledby="progressTitle">
+          <header class="card-head">
+            <h2 id="progressTitle">Study Progress</h2>
+            <span class="pill" id="goalPill">Goal: 6h</span>
+          </header>
+
+          <form id="progressForm" class="progress-form" autocomplete="off">
+            <label class="field">
+              <span>Hours studied today</span>
+              <input id="hoursInput" type="number" min="0" max="24" step="0.5" value="0" />
+            </label>
+            <label class="field">
+              <span>Daily goal (hours)</span>
+              <input id="goalInput" type="number" min="1" max="24" step="0.5" value="6" />
+            </label>
+            <button class="btn btn-primary" type="submit">Save progress</button>
+          </form>
+
+          <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barRoot">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+          <p class="progress-text" id="progressText">0h of 6h — let's get started.</p>
+        </section>
+
+        <!-- ---- Motivational Quote ---- -->
+        <section class="card glass quote-card" aria-labelledby="quoteTitle">
+          <header class="card-head">
+            <h2 id="quoteTitle">Daily Motivation</h2>
+          </header>
+          <blockquote id="quoteText">“Small steps every day beat big steps once a month.”</blockquote>
+          <cite id="quoteAuthor">— Unknown</cite>
+          <button class="btn btn-ghost" id="quoteBtn" type="button">New quote</button>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built with plain HTML, CSS &amp; JavaScript · Data stays in your browser.</p>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+
+
+================================================================================
+FILE 2: style.css
+================================================================================
+
+/* =====================================================================
+   Student Productivity Dashboard — stylesheet
+   Organised as:
+   1. Design tokens (CSS variables)
+   2. Base / reset
+   3. Layout: header, hero, dashboard grid
+   4. Components: buttons, cards, tasks, timer, progress, quote
+   5. Animations
+   6. Responsive breakpoints
+   ===================================================================== */
+
+/* ---------- 1. DESIGN TOKENS ------------------------------------- */
+:root {
+  /* Dark theme is the default look */
+  --bg: #070b18;
+  --bg-2: #0d1428;
+  --text: #eef2ff;
+  --text-soft: #a4b0d0;
+  --accent: #6ee7f9;
+  --accent-2: #a78bfa;
+  --accent-3: #f472b6;
+  --success: #34d399;
+  --danger: #fb7185;
+
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-brd: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 20px 50px rgba(2, 6, 23, 0.55);
+
+  --radius: 20px;
+  --radius-sm: 12px;
+  --gap: 22px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+}
+
+/* Light theme overrides — toggled by JS via data-theme on <html> */
+[data-theme="light"] {
+  --bg: #eef2ff;
+  --bg-2: #f8fafc;
+  --text: #10162b;
+  --text-soft: #4d5878;
+  --accent: #0ea5b7;
+  --accent-2: #7c3aed;
+  --accent-3: #db2777;
+
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-brd: rgba(16, 22, 43, 0.1);
+  --glass-shadow: 0 20px 45px rgba(30, 41, 90, 0.14);
+}
+
+/* ---------- 2. BASE ---------------------------------------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: radial-gradient(circle at 15% 10%, var(--bg-2), var(--bg) 60%);
+  overflow-x: hidden;
+  transition: background 0.5s var(--ease), color 0.3s var(--ease);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Visually hidden but readable by screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Reusable glassmorphism surface */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Floating colour blobs behind everything */
+.bg-blobs {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  filter: blur(90px);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.blob {
+  position: absolute;
+  width: 40vmax;
+  height: 40vmax;
+  border-radius: 50%;
+  animation: float 18s var(--ease) infinite alternate;
+}
+.blob-1 { background: var(--accent); top: -12vmax; left: -8vmax; }
+.blob-2 { background: var(--accent-2); bottom: -14vmax; right: -6vmax; animation-delay: -6s; }
+.blob-3 { background: var(--accent-3); top: 35%; left: 45%; animation-delay: -12s; }
+
+/* ---------- 3. LAYOUT -------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 14px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: min(1140px, calc(100% - 32px));
+  margin: 14px auto 0;
+  padding: 12px 18px;
+  border-radius: 999px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  font-size: 0.8rem;
+  color: #04121b;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.brand-text strong { color: var(--accent); }
+
+.nav {
+  display: flex;
+  gap: 22px;
+  margin-left: auto;
+  font-size: 0.95rem;
+  color: var(--text-soft);
+}
+.nav a {
+  position: relative;
+  transition: color 0.25s var(--ease);
+}
+.nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.3s var(--ease);
+}
+.nav a:hover { color: var(--text); }
+.nav a:hover::after { width: 100%; }
+
+.theme-toggle {
+  position: relative;
+  width: 58px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-brd);
+  background: var(--glass-bg);
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 0.8rem;
+  transition: transform 0.25s var(--ease);
+}
+.theme-toggle:hover { transform: translateY(-2px); }
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  transition: transform 0.35s var(--ease);
+}
+[data-theme="light"] .theme-toggle::before { transform: translateX(26px); }
+.theme-icon { opacity: 0.7; }
+
+/* Hero */
+.hero {
+  width: min(1140px, calc(100% - 32px));
+  margin: 70px auto 60px;
+  text-align: center;
+}
+.eyebrow {
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--text-soft);
+}
+.hero h1 {
+  margin-top: 16px;
+  font-size: clamp(2.2rem, 6vw, 4.1rem);
+  font-weight: 700;
+}
+.gradient-text {
+  background: linear-gradient(100deg, var(--accent), var(--accent-2) 55%, var(--accent-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-sub {
+  max-width: 560px;
+  margin: 18px auto 0;
+  color: var(--text-soft);
+  font-size: 1.03rem;
+}
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 620px;
+  margin: 46px auto 0;
+}
+.stat {
+  border-radius: var(--radius-sm);
+  padding: 16px 10px;
+  transition: transform 0.3s var(--ease);
+}
+.stat:hover { transform: translateY(-4px); }
+.stat-value {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+/* Dashboard grid */
+.dashboard {
+  width: min(1140px, calc(100% - 32px));
+  margin: 0 auto 70px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+/* ---------- 4. COMPONENTS ---------------------------------------- */
+.card {
+  border-radius: var(--radius);
+  padding: 26px;
+  scroll-margin-top: 100px;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 26px 60px rgba(2, 6, 23, 0.4);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.card-head h2 { font-size: 1.15rem; }
+
+.pill {
+  font-size: 0.74rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--glass-brd);
+  color: var(--text-soft);
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background 0.25s var(--ease);
+}
+.btn-primary {
+  color: #04121b;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  box-shadow: 0 12px 28px rgba(110, 231, 249, 0.22);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(167, 139, 250, 0.3); }
+.btn-ghost {
+  color: var(--text);
+  background: var(--glass-bg);
+  border-color: var(--glass-brd);
+}
+.btn-ghost:hover { transform: translateY(-3px); }
+
+/* Inputs */
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-brd);
+  background: var(--glass-bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(110, 231, 249, 0.18);
+}
+
+/* Task list */
+.task-form { display: flex; gap: 10px; }
+.task-list { list-style: none; margin-top: 18px; display: grid; gap: 10px; }
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-brd);
+  background: var(--glass-bg);
+  animation: pop 0.35s var(--ease);
+  transition: transform 0.25s var(--ease);
+}
+.task-item:hover { transform: translateX(4px); }
+.task-item.done .task-text { text-decoration: line-through; color: var(--text-soft); }
+.check {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  border-radius: 7px;
+  border: 1px solid var(--glass-brd);
+  background: transparent;
+  cursor: pointer;
+  color: var(--success);
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: background 0.25s var(--ease);
+}
+.task-item.done .check { background: rgba(52, 211, 153, 0.18); }
+.task-text { flex: 1; font-size: 0.95rem; word-break: break-word; }
+.delete {
+  border: none;
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 1.05rem;
+  opacity: 0.7;
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.delete:hover { opacity: 1; transform: scale(1.15); }
+.empty { margin-top: 16px; font-size: 0.88rem; color: var(--text-soft); }
+
+/* Pomodoro */
+.timer-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 6px auto 20px;
+  width: 210px;
+  height: 210px;
+}
+.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track,
+.ring-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+.ring-track { stroke: var(--glass-brd); }
+.ring-fill {
+  stroke: url(#g);
+  stroke: var(--accent);
+  stroke-dasharray: 326.7;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.4s linear, stroke 0.4s var(--ease);
+}
+body.break-mode .ring-fill { stroke: var(--success); }
+.timer-readout {
+  position: absolute;
+  text-align: center;
+}
+#timerDisplay {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.timer-readout small { display: block; color: var(--text-soft); font-size: 0.78rem; }
+.timer-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.hint { margin-top: 14px; text-align: center; font-size: 0.82rem; color: var(--text-soft); }
+
+/* Progress tracker */
+.progress-form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; font-size: 0.85rem; color: var(--text-soft); }
+.bar {
+  margin-top: 20px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-brd);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+  transition: width 0.7s var(--ease);
+}
+.progress-text { margin-top: 10px; font-size: 0.88rem; color: var(--text-soft); }
+
+/* Quote card */
+.quote-card { grid-column: span 2; text-align: center; }
+#quoteText {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+  line-height: 1.5;
+  max-width: 720px;
+  margin: 0 auto;
+  animation: fadeUp 0.5s var(--ease);
+}
+#quoteAuthor { display: block; margin: 14px 0 20px; color: var(--text-soft); font-style: normal; }
+
+.site-footer {
+  padding: 0 16px 40px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+/* ---------- 5. ANIMATIONS ---------------------------------------- */
+@keyframes float {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(6vmax, 4vmax) scale(1.18); }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Landing entrance animation */
+.reveal { animation: fadeUp 0.7s var(--ease) both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.45s; }
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- 6. RESPONSIVE ---------------------------------------- */
+@media (max-width: 900px) {
+  .dashboard { grid-template-columns: 1fr; }
+  .quote-card { grid-column: span 1; }
+}
+
+@media (max-width: 620px) {
+  .nav { display: none; }
+  .theme-toggle { margin-left: auto; }
+  .hero { margin-top: 46px; }
+  .hero-stats { grid-template-columns: 1fr; }
+  .card { padding: 20px; }
+  .task-form { flex-direction: column; }
+  .task-form .btn { width: 100%; }
+}
+
+
+================================================================================
+FILE 3: script.js
+================================================================================
+
+/* =====================================================================
+   Student Productivity Dashboard — script.js
+   Plain Vanilla JavaScript. No frameworks, no libraries.
+
+   Sections:
+   1.  Tiny helpers (select elements + Local Storage wrappers)
+   2.  Theme toggle
+   3.  To-Do list
+   4.  Pomodoro timer
+   5.  Study progress tracker
+   6.  Motivational quotes
+   7.  Init
+   ===================================================================== */
+
+/* ---------- 1. HELPERS ------------------------------------------- */
+
+// Short helper so we write $("#id") instead of document.querySelector("#id")
+const $ = (selector) => document.querySelector(selector);
+
+// Save any value as JSON in Local Storage (survives page refresh)
+function save(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+// Read a value back. If nothing is stored, return the fallback.
+function load(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : JSON.parse(raw);
+  } catch (error) {
+    console.warn("Could not read", key, error);
+    return fallback;
+  }
+}
+
+/* ---------- 2. THEME TOGGLE -------------------------------------- */
+
+const themeToggle = $("#themeToggle");
+
+// Apply a theme by setting an attribute on <html>; CSS does the rest.
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  save("spd-theme", theme);
+}
+
+themeToggle.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  applyTheme(current === "dark" ? "light" : "dark");
+});
+
+/* ---------- 3. TO-DO LIST ---------------------------------------- */
+
+const taskForm = $("#taskForm");
+const taskInput = $("#taskInput");
+const taskList = $("#taskList");
+const taskEmpty = $("#taskEmpty");
+const taskCounter = $("#taskCounter");
+
+// Each task looks like: { id: 1712..., text: "Read notes", done: false }
+let tasks = load("spd-tasks", []);
+
+// Draw the whole list from the `tasks` array (simple and easy to follow).
+function renderTasks() {
+  taskList.innerHTML = "";
+
+  tasks.forEach((task) => {
+    const li = document.createElement("li");
+    li.className = "task-item" + (task.done ? " done" : "");
+
+    // Complete / uncomplete button
+    const check = document.createElement("button");
+    check.className = "check";
+    check.type = "button";
+    check.textContent = task.done ? "✓" : "";
+    check.setAttribute("aria-label", task.done ? "Mark as not done" : "Mark as done");
+    check.addEventListener("click", () => toggleTask(task.id));
+
+    // Task text
+    const span = document.createElement("span");
+    span.className = "task-text";
+    span.textContent = task.text;
+
+    // Delete button
+    const del = document.createElement("button");
+    del.className = "delete";
+    del.type = "button";
+    del.textContent = "✕";
+    del.setAttribute("aria-label", "Delete task");
+    del.addEventListener("click", () => deleteTask(task.id));
+
+    li.append(check, span, del);
+    taskList.appendChild(li);
+  });
+
+  // Empty state + counters
+  const done = tasks.filter((t) => t.done).length;
+  taskEmpty.style.display = tasks.length ? "none" : "block";
+  taskCounter.textContent = `${done} / ${tasks.length}`;
+  $("#statOpen").textContent = tasks.length - done;
+  $("#statDone").textContent = done;
+
+  save("spd-tasks", tasks);
+}
+
+function addTask(text) {
+  tasks.unshift({ id: Date.now(), text, done: false });
+  renderTasks();
+}
+
+function toggleTask(id) {
+  tasks = tasks.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  renderTasks();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter((t) => t.id !== id);
+  renderTasks();
+}
+
+taskForm.addEventListener("submit", (event) => {
+  event.preventDefault(); // stop the page from reloading
+  const text = taskInput.value.trim();
+  if (!text) return;
+  addTask(text);
+  taskInput.value = "";
+});
+
+/* ---------- 4. POMODORO TIMER ------------------------------------ */
+
+const FOCUS_MINUTES = 25;
+const BREAK_MINUTES = 5;
+const RING_LENGTH = 326.7; // circumference of the SVG circle (2 * PI * 52)
+
+let isBreak = false;
+let secondsLeft = FOCUS_MINUTES * 60;
+let round = 1;
+let intervalId = null; // holds setInterval so we can pause
+
+const timerDisplay = $("#timerDisplay");
+const ringFill = $("#ringFill");
+const modeLabel = $("#modeLabel");
+const cycleLabel = $("#cycleLabel");
+
+// Turn 90 seconds into "01:30"
+function formatTime(totalSeconds) {
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function renderTimer() {
+  const total = (isBreak ? BREAK_MINUTES : FOCUS_MINUTES) * 60;
+  timerDisplay.textContent = formatTime(secondsLeft);
+  modeLabel.textContent = isBreak ? "Break" : "Focus";
+  cycleLabel.textContent = `Round ${round}`;
+  document.body.classList.toggle("break-mode", isBreak);
+  // The ring empties as time runs out
+  ringFill.style.strokeDashoffset = RING_LENGTH * (1 - secondsLeft / total);
+}
+
+// Called when a focus or break block finishes
+function switchMode() {
+  if (!isBreak) round += 1; // a full focus block was completed
+  isBreak = !isBreak;
+  secondsLeft = (isBreak ? BREAK_MINUTES : FOCUS_MINUTES) * 60;
+  renderTimer();
+}
+
+function startTimer() {
+  if (intervalId) return; // already running
+  intervalId = setInterval(() => {
+    secondsLeft -= 1;
+    if (secondsLeft <= 0) switchMode();
+    else renderTimer();
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(intervalId);
+  intervalId = null;
+}
+
+function resetTimer() {
+  pauseTimer();
+  isBreak = false;
+  round = 1;
+  secondsLeft = FOCUS_MINUTES * 60;
+  renderTimer();
+}
+
+$("#startBtn").addEventListener("click", startTimer);
+$("#pauseBtn").addEventListener("click", pauseTimer);
+$("#resetBtn").addEventListener("click", resetTimer);
+
+/* ---------- 5. STUDY PROGRESS TRACKER ---------------------------- */
+
+const progressForm = $("#progressForm");
+const hoursInput = $("#hoursInput");
+const goalInput = $("#goalInput");
+const barFill = $("#barFill");
+const barRoot = $("#barRoot");
+const progressText = $("#progressText");
+const goalPill = $("#goalPill");
+
+// Stored shape: { hours: 2.5, goal: 6 }
+let study = load("spd-study", { hours: 0, goal: 6 });
+
+function renderProgress() {
+  const percent = Math.min(100, Math.round((study.hours / study.goal) * 100)) || 0;
+
+  hoursInput.value = study.hours;
+  goalInput.value = study.goal;
+  barFill.style.width = percent + "%";
+  barRoot.setAttribute("aria-valuenow", percent);
+  goalPill.textContent = `Goal: ${study.goal}h`;
+  $("#statHours").textContent = study.hours + "h";
+
+  progressText.textContent =
+    percent >= 100
+      ? `${study.hours}h of ${study.goal}h — goal smashed. Take a break!`
+      : `${study.hours}h of ${study.goal}h — ${percent}% done.`;
+
+  save("spd-study", study);
+}
+
+progressForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  study = {
+    hours: Math.max(0, Number(hoursInput.value) || 0),
+    goal: Math.max(1, Number(goalInput.value) || 1),
+  };
+  renderProgress();
+});
+
+/* ---------- 6. MOTIVATIONAL QUOTES ------------------------------- */
+
+const quotes = [
+  { text: "Small steps every day beat big steps once a month.", author: "Unknown" },
+  { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
+  { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+  { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
+  { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+  { text: "Focus on being productive instead of busy.", author: "Tim Ferriss" },
+  { text: "Learning never exhausts the mind.", author: "Leonardo da Vinci" },
+];
+
+const quoteText = $("#quoteText");
+const quoteAuthor = $("#quoteAuthor");
+
+function showRandomQuote() {
+  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+  quoteText.textContent = `“${quote.text}”`;
+  quoteAuthor.textContent = `— ${quote.author}`;
+  // Restart the fade-in animation
+  quoteText.style.animation = "none";
+  void quoteText.offsetWidth; // forces the browser to notice the change
+  quoteText.style.animation = "";
+}
+
+$("#quoteBtn").addEventListener("click", showRandomQuote);
+
+/* ---------- 7. INIT ---------------------------------------------- */
+
+applyTheme(load("spd-theme", "dark"));
+renderTasks();
+renderTimer();
+renderProgress();
+showRandomQuote();
+
+
+================================================================================
+FILE 4: README.md
+================================================================================
+
+# Student Productivity Dashboard
+
+A portfolio-quality productivity dashboard for students, built with **only HTML, CSS and Vanilla JavaScript** — no frameworks, no build step, no backend. Everything is stored locally in the browser.
+
+![Status](https://img.shields.io/badge/status-complete-brightgreen) ![Tech](https://img.shields.io/badge/tech-HTML%20%7C%20CSS%20%7C%20JS-blue)
+
+## Overview
+
+Students juggle tasks, focus sessions and study hours across several apps. This single-page dashboard brings them together in one calm, glassmorphism interface that works on mobile, tablet and desktop, and remembers your data between visits using Local Storage.
+
+## Features
+
+- **Glassmorphism UI** with animated gradient blobs and a card-based dashboard layout
+- **Dark / Light theme toggle** (your choice is remembered)
+- **Animated landing section** with live stats
+- **To-Do List** — add, complete and delete tasks, saved in Local Storage
+- **Pomodoro Timer** — start, pause, reset, automatic 25/5 minute cycles with an animated progress ring
+- **Study Progress Tracker** — log daily hours against a goal with a visual progress bar, saved in Local Storage
+- **Motivational quotes** — a new random quote on demand
+- **Fully responsive** with smooth hover effects and transitions
+- **Accessible touches** — semantic HTML, ARIA labels, `prefers-reduced-motion` support
+
+## Project Structure
+
+```text
+student-productivity-dashboard/
+├── index.html   # Semantic markup for header, hero and dashboard cards
+├── style.css    # Design tokens (CSS variables), layout, components, animations
+├── script.js    # Theme, to-do list, Pomodoro, progress tracker, quotes
+└── README.md    # This file
+```
+
+## Installation
+
+No dependencies and no build tools required.
+
+```bash
+git clone https://github.com/<your-username>/student-productivity-dashboard.git
+cd student-productivity-dashboard
+```
+
+Then simply open `index.html` in your browser.
+
+Optional — run a small local server for a cleaner dev experience:
+
+```bash
+# Python 3
+python -m http.server 5500
+# then visit http://localhost:5500
+```
+
+## Deploy to GitHub Pages
+
+1. Push the project to a GitHub repository.
+2. Open **Settings → Pages**.
+3. Under **Source**, choose **Deploy from a branch**.
+4. Select branch `main` and folder `/ (root)`, then **Save**.
+5. Wait a minute — your site goes live at
+   `https://<your-username>.github.io/student-productivity-dashboard/`
+
+## Screenshots
+
+| Dark theme | Light theme |
+| --- | --- |
+| _Add `screenshots/dark.png`_ | _Add `screenshots/light.png`_ |
+
+```markdown
+![Dashboard — dark](screenshots/dark.png)
+![Dashboard — light](screenshots/light.png)
+```
+
+## How It Works (for beginners)
+
+- **CSS variables** in `:root` hold every colour, radius and font. The light theme just overrides those variables under `[data-theme="light"]`, so one attribute change re-skins the whole page.
+- **Local Storage** stores plain strings, so the code wraps values with `JSON.stringify` when saving and `JSON.parse` when loading (`save()` / `load()` helpers in `script.js`).
+- **The to-do list** keeps an array of task objects and re-renders the list from that array after every change — simple to reason about and easy to extend.
+- **The Pomodoro timer** counts down with `setInterval`, and `clearInterval` pauses it. The SVG ring uses `stroke-dashoffset` to show remaining time.
+
+## Future Improvements
+
+- Weekly and monthly study charts
+- Task categories, due dates and priorities
+- Drag-and-drop task reordering
+- Sound and browser notifications when a Pomodoro ends
+- Customisable focus/break lengths
+- Export and import data as JSON
+- Optional cloud sync for multi-device use
+
+## License
+
+MIT — free to use, learn from and adapt.
