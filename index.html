@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Productivity Dashboard</title>
+    <meta
+      name="description"
+      content="A glassmorphism student dashboard with a to-do list, Pomodoro timer, study progress tracker and motivational quotes."
+    />
+    <!-- Google Fonts (the only external resource used) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <!-- Decorative animated background blobs -->
+    <div class="bg-blobs" aria-hidden="true">
+      <span class="blob blob-1"></span>
+      <span class="blob blob-2"></span>
+      <span class="blob blob-3"></span>
+    </div>
+
+    <!-- ============ HEADER ============ -->
+    <header class="site-header glass">
+      <a class="brand" href="#top">
+        <span class="brand-mark">SP</span>
+        <span class="brand-text">Study<strong>Deck</strong></span>
+      </a>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#tasks">Tasks</a>
+        <a href="#pomodoro">Pomodoro</a>
+        <a href="#progress">Progress</a>
+      </nav>
+
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch theme">
+        <span class="theme-icon" data-icon="moon">☾</span>
+        <span class="theme-icon" data-icon="sun">☀</span>
+      </button>
+    </header>
+
+    <main id="top">
+      <!-- ============ HERO / LANDING ============ -->
+      <section class="hero" aria-labelledby="heroTitle">
+        <p class="eyebrow reveal">Focus • Track • Achieve</p>
+        <h1 id="heroTitle" class="reveal delay-1">
+          Your study day,<br /><span class="gradient-text">beautifully organised.</span>
+        </h1>
+        <p class="hero-sub reveal delay-2">
+          A single dashboard for your tasks, focus sessions and study hours — everything saved right
+          in your browser.
+        </p>
+        <div class="hero-actions reveal delay-3">
+          <a class="btn btn-primary" href="#tasks">Start planning</a>
+          <a class="btn btn-ghost" href="#pomodoro">Focus for 25 min</a>
+        </div>
+
+        <!-- Live summary stats -->
+        <div class="hero-stats reveal delay-4">
+          <div class="stat glass">
+            <span class="stat-value" id="statOpen">0</span>
+            <span class="stat-label">Open tasks</span>
+          </div>
+          <div class="stat glass">
+            <span class="stat-value" id="statDone">0</span>
+            <span class="stat-label">Completed</span>
+          </div>
+          <div class="stat glass">
+            <span class="stat-value" id="statHours">0h</span>
+            <span class="stat-label">Studied today</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DASHBOARD GRID ============ -->
+      <div class="dashboard">
+        <!-- ---- To-Do List ---- -->
+        <section class="card glass" id="tasks" aria-labelledby="tasksTitle">
+          <header class="card-head">
+            <h2 id="tasksTitle">To-Do List</h2>
+            <span class="pill" id="taskCounter">0 / 0</span>
+          </header>
+
+          <form id="taskForm" class="task-form" autocomplete="off">
+            <label class="sr-only" for="taskInput">New task</label>
+            <input
+              id="taskInput"
+              type="text"
+              placeholder="e.g. Revise chapter 4 — Thermodynamics"
+              maxlength="90"
+              required
+            />
+            <button class="btn btn-primary" type="submit">Add</button>
+          </form>
+
+          <ul id="taskList" class="task-list"></ul>
+          <p class="empty" id="taskEmpty">Nothing here yet. Add your first task above.</p>
+        </section>
+
+        <!-- ---- Pomodoro Timer ---- -->
+        <section class="card glass" id="pomodoro" aria-labelledby="pomodoroTitle">
+          <header class="card-head">
+            <h2 id="pomodoroTitle">Pomodoro Timer</h2>
+            <span class="pill" id="modeLabel">Focus</span>
+          </header>
+
+          <div class="timer-wrap">
+            <!-- SVG ring shows the remaining time visually -->
+            <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="52" />
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" />
+            </svg>
+            <div class="timer-readout">
+              <span id="timerDisplay" role="timer" aria-live="polite">25:00</span>
+              <small id="cycleLabel">Round 1</small>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button class="btn btn-primary" id="startBtn" type="button">Start</button>
+            <button class="btn btn-ghost" id="pauseBtn" type="button">Pause</button>
+            <button class="btn btn-ghost" id="resetBtn" type="button">Reset</button>
+          </div>
+          <p class="hint">25 minutes of focus, then a 5 minute break. Repeat.</p>
+        </section>
+
+        <!-- ---- Study Progress Tracker ---- -->
+        <section class="card glass" id="progress" aria-labelledby="progressTitle">
+          <header class="card-head">
+            <h2 id="progressTitle">Study Progress</h2>
+            <span class="pill" id="goalPill">Goal: 6h</span>
+          </header>
+
+          <form id="progressForm" class="progress-form" autocomplete="off">
+            <label class="field">
+              <span>Hours studied today</span>
+              <input id="hoursInput" type="number" min="0" max="24" step="0.5" value="0" />
+            </label>
+            <label class="field">
+              <span>Daily goal (hours)</span>
+              <input id="goalInput" type="number" min="1" max="24" step="0.5" value="6" />
+            </label>
+            <button class="btn btn-primary" type="submit">Save progress</button>
+          </form>
+
+          <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="barRoot">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+          <p class="progress-text" id="progressText">0h of 6h — let's get started.</p>
+        </section>
+
+        <!-- ---- Motivational Quote ---- -->
+        <section class="card glass quote-card" aria-labelledby="quoteTitle">
+          <header class="card-head">
+            <h2 id="quoteTitle">Daily Motivation</h2>
+          </header>
+          <blockquote id="quoteText">“Small steps every day beat big steps once a month.”</blockquote>
+          <cite id="quoteAuthor">— Unknown</cite>
+          <button class="btn btn-ghost" id="quoteBtn" type="button">New quote</button>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>Built with plain HTML, CSS &amp; JavaScript · Data stays in your browser.</p>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
